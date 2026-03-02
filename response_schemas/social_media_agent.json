@@ -1,0 +1,29 @@
+{
+  "agent_name": "Social Media Agent",
+  "agent_id": "69a4ebb218aa743b7cdb5192",
+  "agent_type": "json",
+  "accessor": "json",
+  "has_module_outputs": false,
+  "schema": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "AgentResponse",
+      "strict": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "post_text": { "type": "string" },
+          "platform": { "type": "string" },
+          "hashtags": { "type": "array", "items": { "type": "string" } },
+          "image_suggestion": { "type": "string" },
+          "engagement_hook": { "type": "string" },
+          "post_style": { "type": "string" },
+          "published_status": { "type": "string" },
+          "video_concept": { "type": "string" }
+        },
+        "required": ["post_text", "platform", "hashtags", "image_suggestion", "engagement_hook", "post_style", "published_status", "video_concept"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "agent_name": "Website Advisor Agent",
+  "agent_id": "69a4eb989d491c554bab7bc2",
+  "description": "Provides website layout recommendations, product selection guidance, visual hierarchy suggestions, and page structure advice for optimizing WoodiesONWoodlawn's web presence",
+  "agent_type": "json",
+  "accessor": "result",
+  "auto_generated": true,
+  "response_schema": {
+    "layout_suggestions": [
+      {
+        "title": "string",
+        "description": "string",
+        "reasoning": "string"
+      }
+    ],
+    "product_placement": [
+      {
+        "title": "string",
+        "description": "string"
+      }
+    ],
+    "visual_hierarchy_tips": [
+      "string"
+    ],
+    "action_items": [
+      {
+        "priority": "string",
+        "task": "string",
+        "impact": "string"
+      }
+    ]
+  },
+  "example_response": {
+    "layout_suggestions": [
+      {
+        "title": "sample string",
+        "description": "sample string",
+        "reasoning": "sample string"
+      }
+    ],
+    "product_placement": [
+      {
+        "title": "sample string",
+        "description": "sample string"
+      }
+    ],
+    "visual_hierarchy_tips": [
+      "sample string"
+    ],
+    "action_items": [
+      {
+        "priority": "sample string",
+        "task": "sample string",
+        "impact": "sample string"
+      }
+    ]
+  },
+  "has_module_outputs": true,
+  "module_outputs_example": {
+    "artifact_files": [
+      {
+        "file_url": "https://example.com/image.png"
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "agent_name": "Social Media Agent",
+  "agent_id": "69a4ebb218aa743b7cdb5192",
+  "description": "Creates engaging social media posts with relevant hashtags, captions, and image suggestions, then auto-publishes to Twitter",
+  "agent_type": "json",
+  "accessor": "result",
+  "auto_generated": true,
+  "response_schema": {
+    "tweet_text": "string",
+    "hashtags": [
+      "string"
+    ],
+    "image_suggestion": "string",
+    "engagement_hook": "string",
+    "post_style": "string",
+    "published_status": "string"
+  },
+  "example_response": {
+    "tweet_text": "sample string",
+    "hashtags": [
+      "sample string"
+    ],
+    "image_suggestion": "sample string",
+    "engagement_hook": "sample string",
+    "post_style": "sample string",
+    "published_status": "sample string"
+  },
+  "has_module_outputs": true,
+  "module_outputs_example": {
+    "artifact_files": [
+      {
+        "file_url": "https://example.com/image.png"
+      }
+    ]
+  }
+}

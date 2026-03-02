@@ -1,0 +1,36 @@
+{
+  "agent_name": "Product Content Agent",
+  "agent_id": "69a4eb97f42837c6d016fbf5",
+  "description": "Generates SEO-optimized product page copy including titles, meta descriptions, product descriptions, feature lists, and image sourcing suggestions for WoodiesONWoodlawn products",
+  "agent_type": "json",
+  "accessor": "result",
+  "auto_generated": true,
+  "response_schema": {
+    "seo_title": "string",
+    "meta_description": "string",
+    "product_description": "string",
+    "feature_list": [
+      "string"
+    ],
+    "image_suggestions": [
+      "string"
+    ],
+    "target_keywords": [
+      "string"
+    ]
+  },
+  "example_response": {
+    "seo_title": "sample string",
+    "meta_description": "sample string",
+    "product_description": "sample string",
+    "feature_list": [
+      "sample string"
+    ],
+    "image_suggestions": [
+      "sample string"
+    ],
+    "target_keywords": [
+      "sample string"
+    ]
+  }
+}

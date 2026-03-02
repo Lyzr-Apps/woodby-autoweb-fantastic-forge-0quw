@@ -1,0 +1,60 @@
+{
+  "agent_name": "Website Advisor Agent",
+  "agent_id": "69a4eb989d491c554bab7bc2",
+  "agent_type": "json",
+  "accessor": "json",
+  "has_module_outputs": false,
+  "schema": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "AgentResponse",
+      "strict": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "layout_suggestions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" },
+                "reasoning": { "type": "string" }
+              },
+              "required": ["title", "description", "reasoning"],
+              "additionalProperties": false
+            }
+          },
+          "product_placement": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "description": { "type": "string" }
+              },
+              "required": ["title", "description"],
+              "additionalProperties": false
+            }
+          },
+          "visual_hierarchy_tips": { "type": "array", "items": { "type": "string" } },
+          "action_items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "priority": { "type": "string" },
+                "task": { "type": "string" },
+                "impact": { "type": "string" }
+              },
+              "required": ["priority", "task", "impact"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["layout_suggestions", "product_placement", "visual_hierarchy_tips", "action_items"],
+        "additionalProperties": false
+      }
+    }
+  }
+}

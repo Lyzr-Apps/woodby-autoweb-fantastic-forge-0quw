@@ -1,0 +1,13 @@
+{
+  "nodes": [
+    {"id": "input_node", "type": "Input", "label": "User Input", "nodeCategory": "input"},
+    {"id": "product_content_agent", "type": "Agent", "label": "Product Content Agent", "nodeCategory": "agent"},
+    {"id": "social_media_agent", "type": "Agent", "label": "Social Media Agent", "nodeCategory": "agent"},
+    {"id": "website_advisor_agent", "type": "Agent", "label": "Website Advisor Agent", "nodeCategory": "agent"}
+  ],
+  "edges": [
+    {"source": "input_node", "target": "product_content_agent"},
+    {"source": "input_node", "target": "social_media_agent"},
+    {"source": "input_node", "target": "website_advisor_agent"}
+  ]
+}
