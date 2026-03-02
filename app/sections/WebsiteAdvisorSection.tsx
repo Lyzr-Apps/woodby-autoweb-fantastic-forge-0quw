@@ -9,9 +9,10 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { Switch } from '@/components/ui/switch'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { Separator } from '@/components/ui/separator'
-import { FiLayout, FiRefreshCw, FiAlertCircle, FiGrid, FiLayers, FiEye, FiCheckSquare } from 'react-icons/fi'
+import { FiLayout, FiRefreshCw, FiAlertCircle, FiGrid, FiLayers, FiEye, FiCheckSquare, FiCode, FiShoppingCart, FiFile, FiEdit3 } from 'react-icons/fi'
 import type { HistoryItem } from './DashboardSection'
 
 const AGENT_ID = '69a4eb989d491c554bab7bc2'
@@ -33,11 +34,19 @@ interface ActionItem {
   impact?: string
 }
 
+interface ThemeChange {
+  file?: string
+  change_type?: string
+  summary?: string
+}
+
 interface AdvisorResult {
   layout_suggestions?: LayoutSuggestion[]
   product_placement?: ProductPlacement[]
   visual_hierarchy_tips?: string[]
   action_items?: ActionItem[]
+  theme_changes?: ThemeChange[]
+  theme_status?: string
 }
 
 interface WebsiteAdvisorSectionProps {
@@ -63,8 +72,17 @@ function getPriorityColor(priority: string): 'default' | 'secondary' | 'outline'
   return 'secondary'
 }
 
+function getChangeTypeColor(changeType: string): 'default' | 'secondary' | 'outline' | 'destructive' {
+  const ct = (changeType ?? '').toLowerCase()
+  if (ct === 'created' || ct === 'added') return 'default'
+  if (ct === 'modified' || ct === 'updated') return 'secondary'
+  if (ct === 'deleted' || ct === 'removed') return 'destructive'
+  return 'outline'
+}
+
 export default function WebsiteAdvisorSection({ onAddHistory, onSetActiveAgent }: WebsiteAdvisorSectionProps) {
   const [query, setQuery] = useState('')
+  const [applyToTheme, setApplyToTheme] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState<AdvisorResult | null>(null)
@@ -80,7 +98,11 @@ export default function WebsiteAdvisorSection({ onAddHistory, onSetActiveAgent }
     onSetActiveAgent(AGENT_ID)
 
     try {
-      const res = await callAIAgent(query, AGENT_ID)
+      const themeInstruction = applyToTheme
+        ? '\n\nIMPORTANT: Please also apply these changes directly to my Shopify theme. Edit the relevant theme files (Liquid templates, CSS, settings) to implement the recommendations. Report back what files were changed.'
+        : ''
+      const message = query + themeInstruction
+      const res = await callAIAgent(message, AGENT_ID)
       if (res.success) {
         const data = parseAgentResult(res?.response?.result)
         setResult(data)
@@ -104,11 +126,14 @@ export default function WebsiteAdvisorSection({ onAddHistory, onSetActiveAgent }
     }
   }
 
+  const hasThemeChanges = Array.isArray(result?.theme_changes) && result.theme_changes.length > 0
+  const themeStatus = result?.theme_status
+
   return (
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-3xl font-semibold tracking-wide text-foreground">Website Advisor</h1>
-        <p className="text-muted-foreground mt-1 font-sans text-sm">Get expert layout and design recommendations</p>
+        <p className="text-muted-foreground mt-1 font-sans text-sm">Get expert layout recommendations and edit your Shopify theme directly</p>
       </div>
 
       <Card className="shadow-sm">
@@ -123,11 +148,36 @@ export default function WebsiteAdvisorSection({ onAddHistory, onSetActiveAgent }
             <Label htmlFor="query" className="font-sans text-sm">Layout Challenge or Goal</Label>
             <Textarea id="query" placeholder="e.g., I want to redesign the homepage to better showcase new furniture arrivals and improve the path to purchase..." rows={4} value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
+
+          <Separator className="opacity-30" />
+
+          <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border/30">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-md bg-primary/10">
+                <FiCode className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <Label htmlFor="theme-toggle" className="font-sans text-sm font-medium cursor-pointer">Apply to Shopify Theme</Label>
+                <p className="font-sans text-xs text-muted-foreground">Directly edit your store theme files (Liquid, CSS, settings)</p>
+              </div>
+            </div>
+            <Switch id="theme-toggle" checked={applyToTheme} onCheckedChange={setApplyToTheme} />
+          </div>
+
+          {applyToTheme && (
+            <div className="flex items-start gap-2 p-3 rounded-lg bg-accent/10 border border-accent/20">
+              <FiAlertCircle className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+              <p className="font-sans text-xs text-muted-foreground">
+                The advisor will modify your live Shopify theme files. Changes are applied to Liquid templates, CSS, and theme settings. Make sure you have a theme backup or use a duplicate theme for testing.
+              </p>
+            </div>
+          )}
+
           <Button className="w-full" onClick={handleSubmit} disabled={loading || !query.trim()}>
             {loading ? (
-              <><FiRefreshCw className="w-4 h-4 mr-2 animate-spin" /> Analyzing...</>
+              <><FiRefreshCw className="w-4 h-4 mr-2 animate-spin" /> {applyToTheme ? 'Analyzing & Editing Theme...' : 'Analyzing...'}</>
             ) : (
-              'Get Recommendations'
+              <>{applyToTheme ? 'Get Recommendations & Apply to Theme' : 'Get Recommendations'}</>
             )}
           </Button>
           {error && (
@@ -143,13 +193,63 @@ export default function WebsiteAdvisorSection({ onAddHistory, onSetActiveAgent }
         <div className="space-y-4">
           <Card className="shadow-sm"><CardContent className="p-6 space-y-3"><Skeleton className="h-5 w-1/3" /><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-2/3" /></CardContent></Card>
           <Card className="shadow-sm"><CardContent className="p-6 space-y-3"><Skeleton className="h-5 w-1/4" /><Skeleton className="h-4 w-full" /><Skeleton className="h-4 w-3/4" /></CardContent></Card>
-          <Card className="shadow-sm"><CardContent className="p-6 space-y-3"><Skeleton className="h-5 w-1/3" /><Skeleton className="h-4 w-full" /></CardContent></Card>
+          {applyToTheme && (
+            <Card className="shadow-sm"><CardContent className="p-6 space-y-3"><Skeleton className="h-5 w-1/3" /><Skeleton className="h-12 w-full" /><Skeleton className="h-12 w-full" /></CardContent></Card>
+          )}
         </div>
       )}
 
       {!loading && result && (
         <ScrollArea className="max-h-[700px]">
           <div className="space-y-6 pr-2">
+
+            {hasThemeChanges && (
+              <Card className="shadow-sm border-primary/20">
+                <CardHeader className="pb-2">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="font-serif text-base tracking-wide flex items-center gap-2">
+                      <FiShoppingCart className="w-4 h-4 text-primary" />
+                      Shopify Theme Changes
+                    </CardTitle>
+                    {themeStatus && (
+                      <Badge variant="default" className="font-sans text-xs">
+                        <FiEdit3 className="w-3 h-3 mr-1" />
+                        {themeStatus}
+                      </Badge>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {result.theme_changes!.map((change, i) => (
+                    <div key={i} className="border border-border/30 rounded-md p-4 bg-secondary/30">
+                      <div className="flex items-center gap-2 mb-2">
+                        <FiFile className="w-3.5 h-3.5 text-muted-foreground" />
+                        <code className="font-mono text-xs text-primary font-medium">{change?.file ?? 'Unknown file'}</code>
+                        <Badge variant={getChangeTypeColor(change?.change_type ?? '')} className="font-sans text-[10px] ml-auto">
+                          {change?.change_type ?? 'modified'}
+                        </Badge>
+                      </div>
+                      <p className="font-sans text-sm text-muted-foreground">{change?.summary ?? ''}</p>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+
+            {!hasThemeChanges && themeStatus && themeStatus.toLowerCase() !== 'no changes' && themeStatus.toLowerCase() !== 'n/a' && (
+              <Card className="shadow-sm">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-3">
+                    <FiShoppingCart className="w-5 h-5 text-primary shrink-0" />
+                    <div>
+                      <p className="font-sans text-sm font-medium">Theme Status</p>
+                      <p className="font-sans text-xs text-muted-foreground">{themeStatus}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {Array.isArray(result.layout_suggestions) && result.layout_suggestions.length > 0 && (
               <Card className="shadow-sm">
                 <CardHeader className="pb-2">
@@ -253,7 +353,7 @@ export default function WebsiteAdvisorSection({ onAddHistory, onSetActiveAgent }
           <CardContent className="py-16 text-center">
             <FiLayout className="w-10 h-10 mx-auto text-muted-foreground/40 mb-3" />
             <p className="text-muted-foreground font-sans text-sm">Describe your website layout challenge for expert recommendations</p>
-            <p className="text-muted-foreground/60 font-sans text-xs mt-1">Get layout suggestions, product placement ideas, and action items</p>
+            <p className="text-muted-foreground/60 font-sans text-xs mt-1">Get layout suggestions, product placement ideas, and optionally apply changes to your Shopify theme</p>
           </CardContent>
         </Card>
       )}

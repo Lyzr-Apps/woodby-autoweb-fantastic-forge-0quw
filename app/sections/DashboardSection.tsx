@@ -72,7 +72,7 @@ export default function DashboardSection({ onNavigate, history }: DashboardSecti
     {
       icon: FiLayout,
       title: 'Layout Advice',
-      description: 'Get expert website layout recommendations and visual hierarchy tips',
+      description: 'Get layout recommendations and edit your Shopify theme directly',
       section: 'advisor',
       color: 'bg-secondary text-secondary-foreground',
     },

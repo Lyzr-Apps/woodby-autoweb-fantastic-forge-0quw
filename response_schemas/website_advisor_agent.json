@@ -50,9 +50,23 @@
               "required": ["priority", "task", "impact"],
               "additionalProperties": false
             }
-          }
+          },
+          "theme_changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "file": { "type": "string" },
+                "change_type": { "type": "string" },
+                "summary": { "type": "string" }
+              },
+              "required": ["file", "change_type", "summary"],
+              "additionalProperties": false
+            }
+          },
+          "theme_status": { "type": "string" }
         },
-        "required": ["layout_suggestions", "product_placement", "visual_hierarchy_tips", "action_items"],
+        "required": ["layout_suggestions", "product_placement", "visual_hierarchy_tips", "action_items", "theme_changes", "theme_status"],
         "additionalProperties": false
       }
     }
