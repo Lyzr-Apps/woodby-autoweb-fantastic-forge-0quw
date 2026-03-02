@@ -11,8 +11,9 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { FiPackage, FiRefreshCw, FiCopy, FiCheck, FiAlertCircle, FiImage, FiTarget, FiList } from 'react-icons/fi'
+import { FiPackage, FiRefreshCw, FiCopy, FiCheck, FiAlertCircle, FiImage, FiTarget, FiList, FiShoppingCart, FiExternalLink } from 'react-icons/fi'
 import type { HistoryItem } from './DashboardSection'
 
 const AGENT_ID = '69a4eb97f42837c6d016fbf5'
@@ -24,6 +25,7 @@ interface ProductResult {
   feature_list?: string[]
   image_suggestions?: string[]
   target_keywords?: string[]
+  shopify_status?: string
 }
 
 interface ProductContentSectionProps {
@@ -50,6 +52,7 @@ export default function ProductContentSection({ onAddHistory, onSetActiveAgent }
     priceRange: '',
     keywords: '',
   })
+  const [publishToShopify, setPublishToShopify] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [result, setResult] = useState<ProductResult | null>(null)
@@ -66,7 +69,10 @@ export default function ProductContentSection({ onAddHistory, onSetActiveAgent }
     onSetActiveAgent(AGENT_ID)
 
     try {
-      const message = `Product Name: ${formData.name}\nCategory: ${formData.category || 'General'}\nKey Features: ${formData.features}\nPrice Range: ${formData.priceRange}\nTarget Keywords: ${formData.keywords}`
+      const shopifyLine = publishToShopify
+        ? '\nPublish to Shopify: Yes - Please create this product in the Shopify store.'
+        : '\nPublish to Shopify: No'
+      const message = `Product Name: ${formData.name}\nCategory: ${formData.category || 'General'}\nKey Features: ${formData.features}\nPrice Range: ${formData.priceRange}\nTarget Keywords: ${formData.keywords}${shopifyLine}`
       const res = await callAIAgent(message, AGENT_ID)
       if (res.success) {
         const data = parseAgentResult(res?.response?.result)
@@ -110,7 +116,7 @@ export default function ProductContentSection({ onAddHistory, onSetActiveAgent }
     <div className="space-y-6">
       <div>
         <h1 className="font-serif text-3xl font-semibold tracking-wide text-foreground">Product Content Studio</h1>
-        <p className="text-muted-foreground mt-1 font-sans text-sm">Generate SEO-optimized product page content</p>
+        <p className="text-muted-foreground mt-1 font-sans text-sm">Generate SEO-optimized product pages and publish to Shopify</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -151,11 +157,27 @@ export default function ProductContentSection({ onAddHistory, onSetActiveAgent }
               <Label htmlFor="keywords" className="font-sans text-sm">Target Keywords (comma separated)</Label>
               <Input id="keywords" placeholder="e.g., reclaimed wood, dining table, handcrafted" value={formData.keywords} onChange={(e) => setFormData(prev => ({ ...prev, keywords: e.target.value }))} />
             </div>
+
+            <Separator className="opacity-30" />
+
+            <div className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 border border-border/30">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-md bg-primary/10">
+                  <FiShoppingCart className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <Label htmlFor="shopify-toggle" className="font-sans text-sm font-medium cursor-pointer">Publish to Shopify</Label>
+                  <p className="font-sans text-xs text-muted-foreground">Auto-create this product in your Shopify store</p>
+                </div>
+              </div>
+              <Switch id="shopify-toggle" checked={publishToShopify} onCheckedChange={setPublishToShopify} />
+            </div>
+
             <Button className="w-full" onClick={handleGenerate} disabled={loading || !formData.name.trim()}>
               {loading ? (
-                <><FiRefreshCw className="w-4 h-4 mr-2 animate-spin" /> Generating...</>
+                <><FiRefreshCw className="w-4 h-4 mr-2 animate-spin" /> {publishToShopify ? 'Generating & Publishing to Shopify...' : 'Generating...'}</>
               ) : (
-                'Generate Product Page'
+                <>{publishToShopify ? 'Generate & Publish to Shopify' : 'Generate Product Page'}</>
               )}
             </Button>
             {error && (
@@ -197,6 +219,23 @@ export default function ProductContentSection({ onAddHistory, onSetActiveAgent }
             ) : result ? (
               <ScrollArea className="max-h-[600px] pr-2">
                 <div className="space-y-5">
+                  {result.shopify_status && result.shopify_status.toLowerCase() !== 'not published' && result.shopify_status.toLowerCase() !== 'n/a' && (
+                    <>
+                      <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
+                        <FiShoppingCart className="w-5 h-5 text-primary shrink-0" />
+                        <div className="flex-1">
+                          <p className="font-sans text-sm font-medium text-foreground">Shopify Status</p>
+                          <p className="font-sans text-xs text-muted-foreground">{result.shopify_status}</p>
+                        </div>
+                        <Badge variant="default" className="font-sans text-xs shrink-0">
+                          <FiExternalLink className="w-3 h-3 mr-1" />
+                          Published
+                        </Badge>
+                      </div>
+                      <Separator className="opacity-30" />
+                    </>
+                  )}
+
                   <div>
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-sans text-xs text-muted-foreground uppercase tracking-wider">SEO Title</span>

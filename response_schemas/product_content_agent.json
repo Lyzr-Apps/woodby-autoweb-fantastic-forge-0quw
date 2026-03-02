@@ -17,9 +17,10 @@
           "product_description": { "type": "string" },
           "feature_list": { "type": "array", "items": { "type": "string" } },
           "image_suggestions": { "type": "array", "items": { "type": "string" } },
-          "target_keywords": { "type": "array", "items": { "type": "string" } }
+          "target_keywords": { "type": "array", "items": { "type": "string" } },
+          "shopify_status": { "type": "string" }
         },
-        "required": ["seo_title", "meta_description", "product_description", "feature_list", "image_suggestions", "target_keywords"],
+        "required": ["seo_title", "meta_description", "product_description", "feature_list", "image_suggestions", "target_keywords", "shopify_status"],
         "additionalProperties": false
       }
     }

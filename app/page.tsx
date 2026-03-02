@@ -15,7 +15,7 @@ import HistorySection from './sections/HistorySection'
 import type { HistoryItem } from './sections/DashboardSection'
 
 const AGENTS = [
-  { id: '69a4eb97f42837c6d016fbf5', name: 'Product Content Agent', purpose: 'SEO-optimized product pages' },
+  { id: '69a4eb97f42837c6d016fbf5', name: 'Product Content Agent', purpose: 'SEO pages + Shopify publishing' },
   { id: '69a4ebb218aa743b7cdb5192', name: 'Social Media Agent', purpose: 'Facebook, Instagram & TikTok' },
   { id: '69a4eb989d491c554bab7bc2', name: 'Website Advisor Agent', purpose: 'Layout recommendations' },
 ]

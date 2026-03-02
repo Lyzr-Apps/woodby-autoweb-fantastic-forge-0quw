@@ -58,7 +58,7 @@ export default function DashboardSection({ onNavigate, history }: DashboardSecti
     {
       icon: FiPackage,
       title: 'Product Page',
-      description: 'Generate SEO-optimized product descriptions, meta tags, and feature lists',
+      description: 'Generate SEO-optimized product pages and publish to Shopify',
       section: 'product',
       color: 'bg-primary text-primary-foreground',
     },
